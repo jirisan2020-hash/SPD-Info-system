@@ -22,6 +22,12 @@
     --text-2:#5C6B79;
     --text-3:#8B97A3;
     --radius:12px;
+
+    /* 팀별 색상 */
+    --c-planning:#1E4A73;      --c-planning-100:#E6ECF2;
+    --c-support:#1C7C74;       --c-support-100:#E3F1EF;
+    --c-logistics:#B4740A;     --c-logistics-100:#FBF0DD;
+    --c-delivery:#6D4FD1;      --c-delivery-100:#EEEAFB;
   }
   *{box-sizing:border-box;}
   body{
@@ -120,9 +126,22 @@
     border-left:3px solid transparent;
     transition:border-color .15s ease;
   }
-  .team-section.open{
-    border-color:var(--teal);
-  }
+  /* 팀별 강조색: 열렸을 때 좌측 보더 + 아이콘 배경/색상 */
+  .team-section[data-team="planning"]  .icon{ background:var(--c-planning-100);  color:var(--c-planning); }
+  .team-section[data-team="support"]   .icon{ background:var(--c-support-100);   color:var(--c-support); }
+  .team-section[data-team="logistics"] .icon{ background:var(--c-logistics-100); color:var(--c-logistics); }
+  .team-section[data-team="delivery"]  .icon{ background:var(--c-delivery-100);  color:var(--c-delivery); }
+
+  .team-section[data-team="planning"].open  { border-color:var(--c-planning); }
+  .team-section[data-team="support"].open   { border-color:var(--c-support); }
+  .team-section[data-team="logistics"].open { border-color:var(--c-logistics); }
+  .team-section[data-team="delivery"].open  { border-color:var(--c-delivery); }
+
+  .team-section[data-team="planning"].open  .chevron{ color:var(--c-planning); }
+  .team-section[data-team="support"].open   .chevron{ color:var(--c-support); }
+  .team-section[data-team="logistics"].open .chevron{ color:var(--c-logistics); }
+  .team-section[data-team="delivery"].open  .chevron{ color:var(--c-delivery); }
+
   .team-header{
     width:100%;
     background:none;
@@ -139,8 +158,6 @@
   .team-header .icon{
     width:36px;height:36px;
     border-radius:9px;
-    background:var(--teal-100);
-    color:var(--teal);
     display:flex;align-items:center;justify-content:center;
     flex-shrink:0;
   }
@@ -166,7 +183,6 @@
   }
   .team-section.open .chevron{
     transform:rotate(180deg);
-    color:var(--teal);
   }
 
   .team-panel{
@@ -218,6 +234,7 @@
   .go-btn{
     display:inline-flex;
     align-items:center;
+    justify-content:center;
     gap:5px;
     background:var(--navy);
     color:#fff;
@@ -247,6 +264,37 @@
     line-height:1.6;
   }
   .footnote b{color:var(--text-1);}
+
+  /* 모바일 최적화 */
+  @media (max-width:480px){
+    .topbar{ padding:16px 18px; }
+    .topbar .brand h1{ font-size:16px; }
+    .topbar .brand .eyebrow{ font-size:11px; }
+    .badge-source{ font-size:10.5px; padding:5px 10px; }
+
+    .wrap{ padding:20px 14px 48px; }
+    .section-head h2{ font-size:17px; }
+    .section-head p{ font-size:12.5px; }
+
+    .team-header{ padding:13px 14px; gap:10px; }
+    .team-header .icon{ width:32px; height:32px; border-radius:8px; }
+    .team-header .icon svg{ width:16px; height:16px; }
+    .team-header .name{ font-size:14px; }
+    .team-header .count{ font-size:11.5px; }
+
+    .report-list{ padding:10px 10px 12px 10px; }
+    .report-row{
+      flex-direction:column;
+      align-items:stretch;
+      margin-left:0;
+      padding:12px;
+      gap:10px;
+    }
+    .report-row .name-block{ min-width:0; }
+    .go-btn{ width:100%; padding:10px 12px; font-size:13px; }
+
+    .footnote{ font-size:12.5px; padding:14px; }
+  }
 </style>
 </head>
 <body>
@@ -289,8 +337,10 @@
   const icons = {
     planning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>',
     support: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg>',
-    logistics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="12" height="9" rx="1"/><path d="M15 11h3l3 3v3h-6z"/><circle cx="7" cy="19" r="1.4"/><circle cx="17.5" cy="19" r="1.4"/></svg>',
-    delivery: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7-7 9 9-7 7z"/><path d="M4 11l9 9"/><path d="M14.5 6.5l3 3"/></svg>'
+    /* 물류지원팀: 창고 아이콘 */
+    logistics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 4l9 6.5"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/><line x1="9" y1="14" x2="15" y2="14"/></svg>',
+    /* 배송팀: 트럭(차량) 아이콘 */
+    delivery: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="14" height="10"/><path d="M15 10h4l3 3v3h-3"/><circle cx="6" cy="18.3" r="1.8"/><circle cx="17.3" cy="18.3" r="1.8"/><path d="M8 18.3h6.5"/></svg>'
   };
 
   const chevronSvg = '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
@@ -328,6 +378,7 @@
       const section = document.createElement('div');
       section.className = 'team-section';
       section.id = 'section-' + t.id;
+      section.dataset.team = t.id;
 
       const reportHtml = reports.length
         ? reports.map(renderReportRow).join('')
