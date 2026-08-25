@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>영업기획부문 정보시스템</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#14304D;
+    --navy-700:#1E4A73;
+    --teal:#1C7C74;
+    --teal-100:#E3F1EF;
+    --amber:#C9860A;
+    --amber-100:#FBF0DD;
+    --bg:#F3F5F7;
+    --card:#FFFFFF;
+    --border:#E2E6EA;
+    --text-1:#16222E;
+    --text-2:#5C6B79;
+    --text-3:#8B97A3;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Noto Sans KR', sans-serif;
+    background:var(--bg);
+    color:var(--text-1);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  button{font-family:inherit;}
+
+  .topbar{
+    background:var(--navy);
+    color:#fff;
+    padding:20px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .topbar .brand{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .topbar .brand .eyebrow{
+    font-size:12px;
+    color:#9FB4C9;
+    letter-spacing:0.02em;
+  }
+  .topbar .brand h1{
+    font-size:19px;
+    font-weight:700;
+    margin:0;
+  }
+  .badge-source{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#D7E4EE;
+    font-size:12px;
+    padding:6px 12px;
+    border-radius:999px;
+  }
+  .badge-source .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:#3FD6A3;
+    flex-shrink:0;
+  }
+  .badge-source.error .dot{ background:#E24B4A; }
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:32px 24px 64px;
+  }
+
+  .section-head{
+    margin-bottom:18px;
+  }
+  .section-head h2{
+    font-size:20px;
+    margin:0 0 3px;
+    font-weight:700;
+  }
+  .section-head p{
+    font-size:13px;
+    color:var(--text-2);
+    margin:0;
+  }
+
+  .accordion{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .state-msg{
+    background:var(--card);
+    border:1px dashed var(--border);
+    border-radius:var(--radius);
+    padding:40px 20px;
+    text-align:center;
+    color:var(--text-2);
+    font-size:14px;
+  }
+
+  .team-section{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    border-left:3px solid transparent;
+    transition:border-color .15s ease;
+  }
+  .team-section.open{
+    border-color:var(--teal);
+  }
+  .team-header{
+    width:100%;
+    background:none;
+    border:none;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px 18px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .team-header:hover{background:var(--bg);}
+  .team-header:focus-visible{outline:none; background:var(--bg);}
+  .team-header .icon{
+    width:36px;height:36px;
+    border-radius:9px;
+    background:var(--teal-100);
+    color:var(--teal);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .team-header .icon svg{width:19px;height:19px;}
+  .team-header .text-block{
+    flex:1;
+    min-width:0;
+  }
+  .team-header .name{
+    font-size:15px;
+    font-weight:700;
+  }
+  .team-header .count{
+    font-size:12px;
+    color:var(--text-2);
+    margin-top:1px;
+  }
+  .chevron{
+    width:16px;height:16px;
+    color:var(--text-3);
+    flex-shrink:0;
+    transition:transform .2s ease;
+  }
+  .team-section.open .chevron{
+    transform:rotate(180deg);
+    color:var(--teal);
+  }
+
+  .team-panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+  }
+  .team-section.open .team-panel{
+    max-height:600px;
+  }
+  .report-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    padding:0 18px 16px 18px;
+    border-top:1px solid var(--border);
+    padding-top:12px;
+  }
+  .report-empty{
+    margin-left:10px;
+    font-size:13px;
+    color:var(--text-3);
+    padding:8px 4px;
+  }
+  .report-row{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-left:10px;
+  }
+  .report-row .name-block{
+    flex:1;
+    min-width:150px;
+  }
+  .report-row .name-block .name{
+    font-size:14px;
+    font-weight:500;
+    margin-bottom:2px;
+  }
+  .report-row .name-block .sub{
+    font-size:12px;
+    color:var(--text-2);
+  }
+  .go-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    border-radius:7px;
+    padding:6px 12px;
+    font-size:12px;
+    font-weight:500;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .go-btn:hover{background:var(--navy-700);}
+  .go-btn svg{width:11px;height:11px;}
+  .go-btn.disabled{
+    background:var(--border);
+    color:var(--text-3);
+    cursor:not-allowed;
+  }
+
+  .footnote{
+    margin-top:20px;
+    padding:16px 18px;
+    border:1px dashed var(--border);
+    border-radius:var(--radius);
+    font-size:13px;
+    color:var(--text-2);
+    line-height:1.6;
+  }
+  .footnote b{color:var(--text-1);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="eyebrow">동화약품 영업기획부문</span>
+    <h1>영업기획부문 정보시스템</h1>
+  </div>
+  <div class="badge-source" id="source-badge"><span class="dot"></span>Google Sheet 연동 · 불러오는 중</div>
+</div>
+
+<div class="wrap">
+  <div class="section-head">
+    <h2>팀별 보고서</h2>
+    <p>팀을 클릭하면 해당 팀 메뉴 하단에 보고서 목록이 펼쳐집니다. 다른 팀 메뉴는 그대로 유지됩니다.</p>
+  </div>
+
+  <div class="accordion" id="accordion">
+    <div class="state-msg">데이터를 불러오는 중입니다...</div>
+  </div>
+
+  <div class="footnote">
+    <b>안내</b> · 이 화면은 Google Sheet 데이터를 실시간으로 불러옵니다. 보고서 등록・이름 변경・URL 연결・순서 조정은 시트의 행을 추가・수정하는 방식으로 처리되며, 별도 배포 작업 없이 새로고침 시 바로 반영됩니다.
+  </div>
+</div>
+
+<script>
+  // Apps Script 웹앱 URL (Google Sheet 데이터를 JSON으로 반환)
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwmSzj-53I0ue40Wse34AamMoRueH1-WL-vxkA-AD4ZPZHsLHlB6NfoNtKs2O-e-hTYGQ/exec';
+
+  // 팀 표시 정보 (아이콘・설명). 팀명은 시트의 '팀' 컬럼 값과 정확히 일치해야 매칭됩니다.
+  const teamMeta = [
+    { id: "planning",  name: "영업기획팀", desc: "전사 영업 전략・실적 관리" },
+    { id: "support",   name: "영업지원팀", desc: "영업 현장 지원 및 운영" },
+    { id: "logistics", name: "물류지원팀", desc: "재고・입출고 및 물류 운영" },
+    { id: "delivery",  name: "배송팀",     desc: "배송 일정 및 현황 관리" }
+  ];
+
+  const icons = {
+    planning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>',
+    support: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg>',
+    logistics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="12" height="9" rx="1"/><path d="M15 11h3l3 3v3h-6z"/><circle cx="7" cy="19" r="1.4"/><circle cx="17.5" cy="19" r="1.4"/></svg>',
+    delivery: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l7-7 9 9-7 7z"/><path d="M4 11l9 9"/><path d="M14.5 6.5l3 3"/></svg>'
+  };
+
+  const chevronSvg = '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+  const accordion = document.getElementById('accordion');
+  const badge = document.getElementById('source-badge');
+
+  function escapeHtml(str){
+    return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  function renderReportRow(r){
+    const hasUrl = r.url && String(r.url).trim() !== '';
+    const meta = [r.author, r.updated ? ('최종수정 ' + r.updated) : null].filter(Boolean).join(' · ');
+    const btn = hasUrl
+      ? `<button class="go-btn" onclick="event.stopPropagation(); window.open('${escapeHtml(r.url)}', '_blank')">
+           바로가기
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+         </button>`
+      : `<button class="go-btn disabled" disabled>URL 미등록</button>`;
+    return `
+      <div class="report-row">
+        <div class="name-block">
+          <div class="name">${escapeHtml(r.name)}</div>
+          <div class="sub">${escapeHtml(meta || '등록된 정보 없음')}</div>
+        </div>
+        ${btn}
+      </div>`;
+  }
+
+  function render(data){
+    accordion.innerHTML = '';
+    teamMeta.forEach(t => {
+      const reports = (data && data[t.name]) ? data[t.name] : [];
+      const section = document.createElement('div');
+      section.className = 'team-section';
+      section.id = 'section-' + t.id;
+
+      const reportHtml = reports.length
+        ? reports.map(renderReportRow).join('')
+        : '<div class="report-empty">등록된 보고서가 없습니다.</div>';
+
+      section.innerHTML = `
+        <button class="team-header" onclick="toggleTeam('${t.id}')">
+          <div class="icon">${icons[t.id]}</div>
+          <div class="text-block">
+            <div class="name">${t.name}</div>
+            <div class="count">${t.desc} · 보고서 ${reports.length}건</div>
+          </div>
+          ${chevronSvg}
+        </button>
+        <div class="team-panel">
+          <div class="report-list">${reportHtml}</div>
+        </div>
+      `;
+      accordion.appendChild(section);
+    });
+  }
+
+  function toggleTeam(id){
+    const target = document.getElementById('section-' + id);
+    const isOpen = target.classList.contains('open');
+    target.classList.toggle('open', !isOpen);
+  }
+
+  async function loadData(){
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      render(data);
+      badge.classList.remove('error');
+      badge.innerHTML = '<span class="dot"></span>Google Sheet 연동 · 자동 갱신';
+    } catch (err) {
+      accordion.innerHTML = '<div class="state-msg">데이터를 불러오지 못했습니다. 네트워크 상태 또는 API 접근 권한을 확인해 주세요.</div>';
+      badge.classList.add('error');
+      badge.innerHTML = '<span class="dot"></span>연결 실패';
+    }
+  }
+
+  loadData();
+</script>
+
+</body>
+</html>
